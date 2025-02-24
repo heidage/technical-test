@@ -3,9 +3,9 @@ import pandas as pd
 import os
 from tqdm import tqdm
 
-API_URL = 'http://localhost:8001/asr'
-CSV_PATH = './cv-valid-dev.csv'
-AUDIO_DIR = './cv-valid-dev/'
+API_URL = "http://localhost:8001/asr"
+CSV_PATH = "./cv-valid-dev.csv"
+AUDIO_DIR = "C:/Users/shrey/Downloads/common_voice/cv-valid-dev"
 
 def main():
     # load in csv first

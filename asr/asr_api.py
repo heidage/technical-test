@@ -1,6 +1,8 @@
 import wave
 import os
 import aiofiles
+import torch
+import soundfile as sf
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse, HTTPException
@@ -43,15 +45,27 @@ async def trascribe_audio(file: UploadFile = File(...)):
             await f.write(audio)
         
         # check if sampling frequency is 16 KHz
-        with wave.open(file_path) as f:
-            if f.getframerate() != 16000:
-                return JSONResponse(content={"error": "Sampling frequency must be 16 KHz"}, status_code=422)
-            
+        audio_input, sampling_rate =sf.read(file_path)
+        if sampling_rate != 16000:
+            return JSONResponse(content={"error": "Sampling frequency must be 16 KHz"}, status_code=422)
+
+        # load model and processor
+        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
+        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h")
         
+        # pad input values and return pt tensor
+        input_values = processor(audio_input, sampling_rate=16000, return_tensors="pt", padding="longest").input_values
+
+        # retrieve logits
+        logits = model(input_values).logits
+
+        # take argmax and decode
+        predicited_ids = torch.argmax(logits, dim=-1)
+        transcription = processor.batch_decode(predicited_ids)
+
+        return ASRResponse(transcription, duration=len(audio_input)/16000)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
-
     # delete file after the whole process
     finally:
         os.remove(file_path)
-    return ASRResponse(transcription="Hello World",duration="10s")
