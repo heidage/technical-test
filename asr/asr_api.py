@@ -5,10 +5,9 @@ import torch
 import soundfile as sf
 
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import JSONResponse, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from tempfile import NamedTemporaryFile
 
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 
@@ -47,14 +46,14 @@ async def trascribe_audio(file: UploadFile = File(...)):
         # check if sampling frequency is 16 KHz
         audio_input, sampling_rate =sf.read(file_path)
         if sampling_rate != 16000:
-            return JSONResponse(content={"error": "Sampling frequency must be 16 KHz"}, status_code=422)
+            sampling_rate = 16000
 
         # load model and processor
         processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
         model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h")
         
         # pad input values and return pt tensor
-        input_values = processor(audio_input, sampling_rate=16000, return_tensors="pt", padding="longest").input_values
+        input_values = processor(audio_input, sampling_rate=sampling_rate, return_tensors="pt", padding="longest").input_values
 
         # retrieve logits
         logits = model(input_values).logits
