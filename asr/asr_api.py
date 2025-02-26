@@ -13,7 +13,7 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 
 app = FastAPI(title="ASR API to transcribe audio files")
 
-# CORS
+# CORSMiddleware to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,6 +21,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# load model and processor before the server starts
+processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
+model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h")
 
 class ASRResponse(BaseModel):
     transcription: str
@@ -45,10 +49,6 @@ async def trascribe_audio(file: UploadFile = File(...)):
         
         # downsample/ upsample audio to 16kHz
         audio_input, sr = librosa.load(file_path, sr=16000)
-        
-        # load model and processor before the server starts
-        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
-        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h")
 
         # pad input values and return pt tensor
         input_values = processor(audio_input, sampling_rate=16000, return_tensors="pt", padding="longest").input_values
