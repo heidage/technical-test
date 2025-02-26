@@ -2,7 +2,7 @@ import wave
 import os
 import aiofiles
 import torch
-import soundfile as sf
+import librosa
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
@@ -24,7 +24,7 @@ app.add_middleware(
 
 class ASRResponse(BaseModel):
     transcription: str
-    duration:str
+    duration: str
 
 @app.get("/ping")
 def ping():
@@ -38,31 +38,32 @@ async def trascribe_audio(file: UploadFile = File(...)):
     
     # save file temporarily
     try:
-        file_path = f"temp_{file.filename.split("/")[-1]}"
+        file_path = f"temp_{file.filename.split('/')[-1]}"
         async with aiofiles.open(file_path, "wb") as f:
             audio = await file.read()
             await f.write(audio)
         
-        # check if sampling frequency is 16 KHz
-        audio_input, sampling_rate =sf.read(file_path)
-        if sampling_rate != 16000:
-            sampling_rate = 16000
-
-        # load model and processor
+        # downsample/ upsample audio to 16kHz
+        audio_input, sr = librosa.load(file_path, sr=16000)
+        
+        # load model and processor before the server starts
         processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
         model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h")
-        
+
         # pad input values and return pt tensor
-        input_values = processor(audio_input, sampling_rate=sampling_rate, return_tensors="pt", padding="longest").input_values
+        input_values = processor(audio_input, sampling_rate=16000, return_tensors="pt", padding="longest").input_values
 
         # retrieve logits
         logits = model(input_values).logits
 
         # take argmax and decode
         predicited_ids = torch.argmax(logits, dim=-1)
-        transcription = processor.batch_decode(predicited_ids)
+        transcription = processor.batch_decode(predicited_ids)[0]
 
-        return ASRResponse(transcription, duration=len(audio_input)/16000)
+        print("Input values shape:", audio_input.shape, "sampling rate:", sr)
+
+        return ASRResponse(transcription=transcription, duration=f"{librosa.get_duration(y=audio_input, sr=sr)}")
+    
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
     # delete file after the whole process

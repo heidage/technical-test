@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from tqdm import tqdm
 
-API_URL = "http://localhost:8001/asr"
+API_URL = "http://127.0.0.1:8001/asr"
 CSV_PATH = "./cv-valid-dev.csv"
 AUDIO_DIR = "C:/Users/shrey/Downloads/common_voice/cv-valid-dev"
 
@@ -16,9 +16,10 @@ def main():
 
     # loop through the filenames in dataframe
     for filename in tqdm(df['filename'], desc="Transcribing"):
-        # check if file exists and open it
-        if os.path.exists(filename):
-            with open(filename, "rb") as f:
+        # check if file exists and open 
+        audio_path = os.path.join(AUDIO_DIR, filename)
+        if os.path.exists(audio_path):
+            with open(audio_path, "rb") as f:
                 # send POST request to API endpoint
                 response = requests.post(API_URL, files={"file":f})
 
