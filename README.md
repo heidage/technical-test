@@ -40,12 +40,19 @@ The overall performance, where it transcribed the common-voice mp3 files under c
 The answers for this task is written in `training-report.pdf`.
 
 ## Task 5
-All the necesarry code files: `cv-hotword-5a.ipynb` and `cv-hotword-similarity-5b.ipynb` is inside the folder `hotword-detection`. For task 5a, the file `detected.txt` is saved and shows the list of mp3 filenames together with the hot words detected in each file. 
+All the necesarry code files: `cv-hotword-5a.ipynb` and `cv-hotword-similarity-5b.ipynb` is inside the folder `hotword-detection`. 
+
+### Task 5a
+The file `detected.txt` is saved and shows the list of mp3 filenames together with the hot words detected in each file. 
 
 
-You can use the file `cv-valid-dev.csv` which is in the folder when you need to import the dataset. It also contains the column `similarity`, which contains `True` or `False` values.
+### Task 5b
+There is a requirements.txt which contains the necessary packages to run the code. The code is written in `cv-hotword-similarity-5b.ipynb`. The file `cv-valid-dev.csv` has the column `similarity` which contains `True` or `False` values depending on the cosine similarity between the hotword and the `text` column.
 
-
+**Create Environment**
+1. Create a virtual environment using the command: `python3 -m venv venv`
+2. Run the command `source venv/bin/activate` and run the command `pip install -r requirements.txt` to install the packages. 
+3. Run the command: `python3 -m ipykernel install --user --name=myenv` to create a kernel for the virtual environment. Use the kernel to run the ipynb file.
 
 ## Task 6
 The essay for this task is written in `essay-ssl.pdf`
