@@ -26,3 +26,26 @@ Under the folder ```asr```, these are the files inside it:
 **Assumptions made**
 1. Since the audio being fed to ```wav2vec2-large-960h``` is required to be sampled at 16kHz, I used the ```librosa``` library to sample the audio at 16kHz when loading in using the audio file path. Hence I assumed that the audio should not be discarded but instead sampled at 16kHz
 2. Assumed that the ```cv-decode.py``` should just use my local directory to the ```cv-valid-dev``` to fetch the audio. Therefore, I did not add it into the repository as the dataset is huge.
+
+## Task 3
+Under the folder asr-train, there is a file `cv-train-2a.ipynb` which contains the code used to fine-tune the `wav2vec2-large-960h` model. The fine tuned model is saved and the folder name is `wav2vec2-large-960h-cv`.
+
+All the code explanations for chosen preprocessing, tokenizer, feature extraction and pipeline processes are written in the ipynb file.
+
+There is `vocab.json` file which consists of the vocabulary saved for the tokenizer and the `cv-valid-train.csv` was used for fine tuning and evaluating the model with a 70-30 split.
+
+The overall performance, where it transcribed the common-voice mp3 files under cv-valid-test folder and compared againt the the text in `cv-valid-test.csv` is stored in a seperate csv called `performance.csv`
+
+## Task 4
+The answers for this task is written in `training-report.pdf`.
+
+## Task 5
+All the necesarry code files: `cv-hotword-5a.ipynb` and `cv-hotword-similarity-5b.ipynb` is inside the folder `hotword-detection`. For task 5a, the file `detected.txt` is saved and shows the list of mp3 filenames together with the hot words detected in each file. 
+
+
+You can use the file `cv-valid-dev.csv` which is in the folder when you need to import the dataset. It also contains the column `similarity`, which contains `True` or `False` values.
+
+
+
+## Task 6
+The essay for this task is written in `essay-ssl.pdf`
