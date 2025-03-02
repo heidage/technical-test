@@ -1,0 +1,5 @@
+InstructorEmbedding==1.0.1
+sentence-transformers==2.2.2
+huggingface-hub==0.25.2
+transformers==4.29.2
+ipykernel
