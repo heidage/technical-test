@@ -1,6 +1,8 @@
 # technical-test
 
-This README.md contains the information, steps taken for each task and the assumptions made while doing the task.
+This README.md contains the information, steps taken for each task and the assumptions made while doing the task. When you need to clone this repository, please make sure you have ```git lfs``` installed.
+
+After that, clone the repository.
 
 ## Task 1:
 
