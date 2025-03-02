@@ -40,7 +40,7 @@ The overall performance, where it transcribed the common-voice mp3 files under c
 The answers for this task is written in `training-report.pdf`.
 
 ## Task 5
-All the necesarry code files: `cv-hotword-5a.ipynb` and `cv-hotword-similarity-5b.ipynb` is inside the folder `hotword-detection`. 
+All the necesarry code files: `cv-hotword-5a.ipynb` and `cv-hotword-similarity-5b.ipynb` is inside the folder `hotword-detection`. The results from task 4 is saved in a csv file called `task_4.csv`.
 
 ### Task 5a
 The file `detected.txt` is saved and shows the list of mp3 filenames together with the hot words detected in each file. 
